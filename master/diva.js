@@ -11,12 +11,21 @@ Java.perform(function() {
     // var Button = Java.use("android.view.Button")
     // Java.use("android.app.Activity")
 
-    var AppCompactActivity = Java.use("android.support.v7.app.AppCompatActivity");
+    // var AppCompactActivity = Java.use("android.support.v7.app.AppCompatActivity");
 
+    // var View = Java.use("android.view.View");
+    // View.setOnClickListener.implementation = function(listener) {
+    //     console.log("SetOnclick!", this, listener)
+    //     this.setOnClickListener(listener)
+    // }
+    var Button = Java.use("android.widget.Button");
     var View = Java.use("android.view.View");
-    View.setOnClickListener.implementation = function(listener) {
-        console.log("SetOnclick!", this, listener)
+
+    Button.setOnClickListener.implementation = function(listener) {
+        //var tmp
+        send("" + this)
         this.setOnClickListener(listener)
+        
     }
 
     // var OnClickListener = Java.use("android.support.v7.internal.app.AppCompatViewInflater$DeclaredOnClickListener")
