@@ -4,14 +4,34 @@
 
 Java.perform(function() {
 
-    var MainActivity = Java.use("jakhar.aseem.diva.MainActivity");
-    // var View = Java.use("android.view.View");
-    // var System = Java.use('java.lang.System');
-    // var ActivityThread = Java.use("android.app.ActivityThread");
+    // var MainActivity = Java.use("jakhar.aseem.diva.MainActivity");
+    
     // var LogActivity = Java.use("jakhar.aseem.diva.LogActivity");
-    // var Intent = Java.use("android.content.Intent");
     // var JavaString = Java.use("java.lang.String");
+    // var Button = Java.use("android.view.Button")
+    // Java.use("android.app.Activity")
 
+    var AppCompactActivity = Java.use("android.support.v7.app.AppCompatActivity");
+
+    var View = Java.use("android.view.View");
+    View.setOnClickListener.implementation = function(listener) {
+        console.log("SetOnclick!", this, listener)
+        this.setOnClickListener(listener)
+    }
+
+    // var OnClickListener = Java.use("android.support.v7.internal.app.AppCompatViewInflater$DeclaredOnClickListener")
+
+    // OnClickListener.onClick.implementation = function(view) {
+    //     console.log("OnClick:" ,view)
+    //     this.onClick(view)
+    // }
+
+    // AppCompactActivity.onCreate.implementation = function(savedInstanceState) {
+    //     console.log("ONCREATE!!!!")
+    //     this.onCreate(savedInstanceState)
+    //     // this.startActivity(Intent.$new(this, LogActivity.class));
+    //     // var button = this.findViewById
+    // }
 
 
 
@@ -22,8 +42,7 @@ Java.perform(function() {
     //     console.log(Java.use("android.util.Log").getStackTraceString(Java.use("java.lang.Exception").$new()))
     // }
 
-    // var OnClickListener = Java.use("android.support.v7.internal.app.AppCompatViewInflater$DeclaredOnClickListener")
-    // OnClickListener.onClick(View.$new())
+    
 
     // Java.use("android.app.Activity").onCreate.overload("android.os.Bundle").implementation = function(savedInstanceState) {
     //     var currentActivity = this;
