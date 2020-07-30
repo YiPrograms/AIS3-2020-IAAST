@@ -11,7 +11,7 @@ Java.perform(function() {
     // var Button = Java.use("android.view.Button")
     // Java.use("android.app.Activity")
 
-    // var AppCompactActivity = Java.use("android.support.v7.app.AppCompatActivity");
+    var AppCompactActivity = Java.use("android.support.v7.app.AppCompatActivity");
 
     // var View = Java.use("android.view.View");
     // View.setOnClickListener.implementation = function(listener) {
@@ -19,13 +19,21 @@ Java.perform(function() {
     //     this.setOnClickListener(listener)
     // }
     var Button = Java.use("android.widget.Button");
+    var Edittext = Java.use("android.widget.EditText")
     var View = Java.use("android.view.View");
 
     Button.setOnClickListener.implementation = function(listener) {
         //var tmp
         send("" + this)
         this.setOnClickListener(listener)
-        
+    }
+
+    Edittext.setText.implementation = function(text, type) {
+        var JavaString = Java.use('java.lang.String');
+        var exampleString1 = JavaString.$new('Hello World, this is an example string in Java.');
+        send("" + this)
+        text = exampleString1
+        this.setText(text, type)
     }
 
     // var OnClickListener = Java.use("android.support.v7.internal.app.AppCompatViewInflater$DeclaredOnClickListener")
@@ -37,8 +45,8 @@ Java.perform(function() {
 
     // AppCompactActivity.onCreate.implementation = function(savedInstanceState) {
     //     console.log("ONCREATE!!!!")
-    //     this.onCreate(savedInstanceState)
-    //     // this.startActivity(Intent.$new(this, LogActivity.class));
+    //     //this.onCreate(savedInstanceState)
+    //     this.startActivity(Intent.$new(this, LogActivity.class));
     //     // var button = this.findViewById
     // }
 
