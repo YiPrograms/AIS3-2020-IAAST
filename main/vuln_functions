@@ -1,0 +1,18 @@
+CLASS|android.util.Log
+v('java.lang.String', 'java.lang.String')|The App logs information. Sensitive information should never be logged.|[A]
+v('java.lang.String', 'java.lang.String', 'java.lang.Throwable')|The App logs information. Sensitive information should never be logged.|[A]
+d('java.lang.String', 'java.lang.String')|The App logs information. Sensitive information should never be logged.|[A]
+d('java.lang.String', 'java.lang.String', 'java.lang.Throwable')|The App logs information. Sensitive information should never be logged.|[A]
+i('java.lang.String', 'java.lang.String')|The App logs information. Sensitive information should never be logged.|[A]
+i('java.lang.String', 'java.lang.String', 'java.lang.Throwable')|The App logs information. Sensitive information should never be logged.|[A]
+w('java.lang.String', 'java.lang.String')|The App logs information. Sensitive information should never be logged.|[A]
+w('java.lang.String', 'java.lang.Throwable')|The App logs information. Sensitive information should never be logged.|[A]
+w('java.lang.String', 'java.lang.String', 'java.lang.Throwable')|The App logs information. Sensitive information should never be logged.|[A]
+e('java.lang.String', 'java.lang.String')|The App logs information. Sensitive information should never be logged.|[A]
+e('java.lang.String', 'java.lang.String', 'java.lang.Throwable')|The App logs information. Sensitive information should never be logged.|[A]
+
+CLASS|android.os.Environment
+getExternalStorageDirectory()|App can read/write to External Storage. Any App can read data written to External Storage.
+getExternalStoragePublicDirectory('java.lang.String')|App can read/write to External Storage. Any App can read data written to External Storage.
+getExternalStorageState()|App can read/write to External Storage. Any App can read data written to External Storage.
+getExternalStorageState('java.io.File')|App can read/write to External Storage. Any App can read data written to External Storage.
