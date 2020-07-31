@@ -1,7 +1,9 @@
-from mobsf import MOBSF
+# MobSF == 3.1.0
+
+from mobsf import MobSF
 import javalang
 
-HOST = '140.114.77.172'
+HOST = 'localhost'
 PORT = 8000
 UPLOAD_APK = '../diva-beta.apk'
 
@@ -25,7 +27,7 @@ def getClass(tree, target_lines):
     return result
 
 
-mobsf = MOBSF(HOST, PORT)
+mobsf = MobSF(HOST, PORT)
 apk_file = mobsf.upload(UPLOAD_APK)
 report = mobsf.scan(apk_file)
 

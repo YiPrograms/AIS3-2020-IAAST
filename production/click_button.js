@@ -15,6 +15,7 @@ Java.perform(function() {
     }
 
     EditText.setText.implementation = function(text, type) {
+        console.log("[*] [ACTIVITY]: Filling input with '5Om3_53cr37_1NFo'...");
         var newText = JavaString.$new('5Om3_53cr37_1NFo');
         this.setText(newText, type);
     }

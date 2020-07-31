@@ -6,6 +6,7 @@ Java.perform(function() {
     Button.setOnClickListener.implementation = function(listener) {
         send("" + this)
         this.setOnClickListener(listener)
+        console.log(this.toString())
     }
 
 })

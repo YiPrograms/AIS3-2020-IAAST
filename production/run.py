@@ -3,6 +3,10 @@ import sys
 import os
 import time
 from termcolor import cprint
+import argparse
+
+from mobsf import MobSF
+import javalang
 
 DELAY_TIME = 1
 WAIT_TIME = 2
@@ -102,9 +106,54 @@ def click_button(activity_name, button_id):
 def generate_sec_js(file):
     pass
 
+def mobsf_scan(host, port, apk):
+    mobsf = MobSF(host, port)
+    apk_file = mobsf.upload(apk)
+    report = mobsf.scan(apk_file)
+
+    def isActivity(class_node):
+        if class_node.extends.name == 'AppCompatActivity':
+            return True
+        else:
+            return False
+
+
+    def getClass(tree, target_lines):
+        result = set()
+        for line in map(int, target_lines.split(',')):
+            prev_class = None
+            for path, node in tree.filter(javalang.tree.ClassDeclaration):
+                if node.position.line > line:
+                    break
+                prev_class = node
+            if prev_class is not None and isActivity(prev_class):
+                result.add(prev_class.name)
+        return result
+
+    vuln_activities = set()
+
+    code_analysis = report['code_analysis']
+    for issue_type in code_analysis.keys():
+        files = code_analysis[issue_type]['files']
+        for file_path in files.keys():
+            src = mobsf.viewSource(apk_file['hash'], file_path)['dat']
+            tree = javalang.parse.parse(src)
+            target_lines = files[file_path]
+            # print("class: {}".format(getClass(tree, target_lines)))
+            vuln_activities = vuln_activities.union(getClass(tree, target_lines))
+    return vuln_activities
+
 
 if __name__ == "__main__":
-    vuln_activities = ["LogActivity", "InsecureDataStorage4Activity", "SQLInjectionActivity"]
+
+    # parser = argparse.ArgumentParser
+    # parser.add_argument("host", help="MobSF IP/Hostname")
+    # parser.add_argument("port", help="MobSF Port")
+    # parser.add_argument("https", help="Connect to MobSF using HTTPS", action="store_false")
+
+    
+    vuln_activities = mobsf_scan("localhost", 8000, "../diva-beta.apk")
+    # vuln_activities = mobsf_scan("localhost", 8000, "../diva-beta.apk")
     for vuln_act in vuln_activities:
         print("[*] {}: Running test on activity: {}".format(vuln_act, vuln_act))
 
