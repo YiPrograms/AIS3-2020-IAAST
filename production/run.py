@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 import frida
 import sys
 import os
@@ -8,11 +10,10 @@ import argparse
 from mobsf import MobSF
 import javalang
 
-DELAY_TIME = 1
-WAIT_TIME = 2
+DELAY_TIME = 0.5
+WAIT_TIME = 0.8
+FINAL_WAIT_TIME = 2
 
-app_name = "jakhar.aseem.diva"
-# app_name = sys.argv[1]
 
 def open_activity(activity_name):
     print("[*] {}: Starting activity...".format(activity_name))
@@ -29,7 +30,7 @@ def reopen_page(activity_name):
 
 
 
-def find_buttons(activity_name):
+def find_buttons(activity_name, app_name):
     """
     Return a set of Buttons,]
     """
@@ -61,10 +62,11 @@ def find_buttons(activity_name):
     reopen_page(activity_name)
     time.sleep(WAIT_TIME)
     print("[*] {}: Found {} buttons".format(activity_name, len(buttons)))
+    script.unload()
     return buttons
 
 
-def click_button(activity_name, button_id):
+def click_button(activity_name, button_id, app_name):
     """
     Click button, also insert text to EditTexts, and other security checks
     """
@@ -90,7 +92,7 @@ def click_button(activity_name, button_id):
                 cprint(msg, 'red')
             else:
                 cprint(msg.split(": ")[0] + ": ", 'red', end="")
-                cprint(msg.split(": ")[1], 'yellow')
+                cprint(": ".join(msg.split(": ")[1:]), 'yellow')
 
     session = frida.get_usb_device().attach(app_name)
 
@@ -100,25 +102,69 @@ def click_button(activity_name, button_id):
 
     print("[*] {}: Security testing hooks added, reloading activity...".format(activity_name))
     reopen_page(activity_name)
-    time.sleep(WAIT_TIME*2)
+    time.sleep(FINAL_WAIT_TIME)
+    # script.unload()
 
 
-def generate_sec_js(file):
-    pass
+# def generate_sec_js(file):
+#     lines = open("vuln_functions").read().splitlines()
+#     output = []
 
-def mobsf_scan(host, port, apk):
-    mobsf = MobSF(host, port)
+#     classes = []
+#     curClass = ""
+#     uniqueSet = set()
+#     for l in lines:
+#         if len(l.strip()) == 0:
+#             continue
+
+#         items = l.split("|")
+#         if items[0] == "CLASS":
+#             curClass = items[1]
+#             classes[curClass] = []
+#             uniqueSet.clear()
+#         else:
+#             fun_name = items[0].split('(')[0]
+#             fun_args = items[0].split('(')[1].split([')'][0])
+#             args_cnt = len(fun_args.split(','))
+#             if fun_name in uniqueSet:
+#                 overload = True
+#             else:
+#                 uniqueSet.add()
+#             classes[curClass].append(
+        
+#             res.append("    var {} = Java.use('{}');".format(curClass, items[1]))
+
+#         res.append("    {}.{}.implementation = function({}) {".append())
+        
+
+        
+
+def install_app(file, app_name):
+    print("[*] Phone: Checking if app {} is installed...".format(app_name))
+    if os.system("adb shell pm list packages | grep {} > /dev/null".format(app_name)) != 0:
+        print("[*] Phone: App not installed, installing...")
+        os.system("adb install {} > /dev/null".format(file))
+        print("[*] Phone: App installed!")
+    else:
+        print("[*] Phone: App is already installed")
+
+
+
+def mobsf_scan(host, port, apk, https):
+    mobsf = MobSF(host, port, https)
     apk_file = mobsf.upload(apk)
     report = mobsf.scan(apk_file)
 
-    def isActivity(class_node):
-        if class_node.extends.name == 'AppCompatActivity':
+    activity_names = report["activities"]
+    def isActivity(class_name, file_path):
+        class_fullname = ".".join(file_path.split("/")[:-1]) + "." + class_name
+        if class_fullname in activity_names:
             return True
         else:
             return False
 
 
-    def getClass(tree, target_lines):
+    def getClass(tree, target_lines, file_path):
         result = set()
         for line in map(int, target_lines.split(',')):
             prev_class = None
@@ -126,7 +172,7 @@ def mobsf_scan(host, port, apk):
                 if node.position.line > line:
                     break
                 prev_class = node
-            if prev_class is not None and isActivity(prev_class):
+            if prev_class is not None and isActivity(prev_class.name, file_path):
                 result.add(prev_class.name)
         return result
 
@@ -140,27 +186,35 @@ def mobsf_scan(host, port, apk):
             tree = javalang.parse.parse(src)
             target_lines = files[file_path]
             # print("class: {}".format(getClass(tree, target_lines)))
-            vuln_activities = vuln_activities.union(getClass(tree, target_lines))
-    return vuln_activities
+            vuln_activities = vuln_activities.union(getClass(tree, target_lines, file_path))
+    print("[*] MobSF: Found {} activities with potential security issues".format(len(vuln_activities)))
+    return vuln_activities, report["package_name"]
 
 
 if __name__ == "__main__":
 
-    # parser = argparse.ArgumentParser
-    # parser.add_argument("host", help="MobSF IP/Hostname")
-    # parser.add_argument("port", help="MobSF Port")
-    # parser.add_argument("https", help="Connect to MobSF using HTTPS", action="store_false")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("host", help="MobSF IP/Hostname")
+    parser.add_argument("-p", "--port", help="MobSF Port", default="8000")
+    parser.add_argument("apk", help="APK file path")
+    parser.add_argument("--https", help="Connect to MobSF using HTTPS", action="store_true")
 
-    
-    vuln_activities = mobsf_scan("localhost", 8000, "../diva-beta.apk")
-    # vuln_activities = mobsf_scan("localhost", 8000, "../diva-beta.apk")
+    args = parser.parse_args()
+
+    # vuln_activities = ["AccessControl2Activity"]
+    vuln_activities, app_name = mobsf_scan(args.host, args.port, args.apk, args.https)
+    install_app(args.apk, app_name)
+
     for vuln_act in vuln_activities:
         print("[*] {}: Running test on activity: {}".format(vuln_act, vuln_act))
 
-        buttons = find_buttons(vuln_act)
+        buttons = find_buttons(vuln_act, app_name)
         
         for button in buttons:
-            click_button(vuln_act, button)
+            click_button(vuln_act, button, app_name)
+    
+    sys.stdin.read()
+
 
 
 

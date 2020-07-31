@@ -3,8 +3,8 @@ from bs4 import BeautifulSoup
 import json
 
 class MobSF():
-    def __init__(self, host, port):
-        self.url = 'http://{}:{}'.format(host, port)
+    def __init__(self, host, port, https):
+        self.url = 'http{}://{}:{}'.format("s" if https else "",host, port)
         print("[*] MobSF: URL: {}".format(self.url))
         print("[*] MobSF: Connecting to MobSF API...")
         # get api key
@@ -40,7 +40,8 @@ class MobSF():
         }
         req = requests.post(self.url + '/api/v1/scan', headers=headers, data=data)
         print("[*] MobSF: Finished scanning!")
-        print("[*] MobSF: Result: {}/StaticAnalyzer/?name={}&type={}&checksum={}#code_analysis".format(self.url, file["file_name"], file["scan_type"], file["hash"]))
+        scan_url = "{}/StaticAnalyzer/?name={}&type={}&checksum={}".format(self.url, file["file_name"], file["scan_type"], file["hash"])
+        print("[*] MobSF: Result: {}#code_analysis".format(scan_url))
         return json.loads(req.text)
 
     def viewSource(self, hash, file, type=None):
@@ -56,3 +57,4 @@ class MobSF():
         }
         req = requests.post(self.url + '/api/v1/view_source', headers=headers, data=data)
         return json.loads(req.text)
+    

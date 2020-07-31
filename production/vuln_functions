@@ -16,3 +16,18 @@ getExternalStorageDirectory()|App can read/write to External Storage. Any App ca
 getExternalStoragePublicDirectory('java.lang.String')|App can read/write to External Storage. Any App can read data written to External Storage.
 getExternalStorageState()|App can read/write to External Storage. Any App can read data written to External Storage.
 getExternalStorageState('java.io.File')|App can read/write to External Storage. Any App can read data written to External Storage.
+
+CLASS|java.io.File
+createTempFile('java.lang.String', 'java.lang.String')|App can read/write to External Storage. Any App can read data written to External Storage.
+createTempFile('java.lang.String', 'java.lang.String', "java.io.File")|App can read/write to External Storage. Any App can read data written to External Storage.
+
+CLASS|android.database.sqlite.SQLiteDatabase
+query('java.lang.String', '[Ljava.lang.String;', 'java.lang.String', '[Ljava.lang.String;', 'java.lang.String', 'java.lang.String', 'java.lang.String')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.
+query('java.lang.String', '[Ljava.lang.String;', 'java.lang.String', '[Ljava.lang.String;', 'java.lang.String', 'java.lang.String', 'java.lang.String', 'java.lang.String')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.
+query('boolean', 'java.lang.String', '[Ljava.lang.String;', 'java.lang.String', '[Ljava.lang.String;', 'java.lang.String', 'java.lang.String', 'java.lang.String', 'java.lang.String')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.
+query('boolean', 'java.lang.String', '[Ljava.lang.String;', 'java.lang.String', '[Ljava.lang.String;', 'java.lang.String', 'java.lang.String', 'java.lang.String', 'java.lang.String', 'android.os.CancellationSignal')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.
+rawQuery('java.lang.String', '[Ljava.lang.String;', 'android.os.CancellationSignal')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.
+rawQuery('java.lang.String', '[Ljava.lang.String;')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.
+execSQL('java.lang.String')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.
+execSQL('java.lang.String', '[Ljava.lang.Object;')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.
+

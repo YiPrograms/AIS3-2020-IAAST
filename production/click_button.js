@@ -23,7 +23,7 @@ Java.perform(function() {
 
 
     var sendWarn = function(disc, msg){
-        send("WARN#[!] [ACTIVITY]: ----- ⚠️ Found security flaw ⚠️ -----");
+        send("WARN#[!] [ACTIVITY]: ----- ⚠️ Found security issue ⚠️ -----");
         send("WARN#[!] [ACTIVITY]: " + disc);
         if (msg)
             send("WARN#[!] [ACTIVITY]: > " + msg);
