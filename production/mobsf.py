@@ -43,18 +43,4 @@ class MobSF():
         scan_url = "{}/StaticAnalyzer/?name={}&type={}&checksum={}".format(self.url, file["file_name"], file["scan_type"], file["hash"])
         print("[*] MobSF: Result: {}#code_analysis".format(scan_url))
         return json.loads(req.text)
-
-    def viewSource(self, hash, file, type=None):
-        if type == None:
-            type = 'apk'
-        headers = {
-            'Authorization' : self.api_key
-        }
-        data = {
-            'hash' : hash,
-            'file' : file,
-            'type' : type
-        }
-        req = requests.post(self.url + '/api/v1/view_source', headers=headers, data=data)
-        return json.loads(req.text)
     
