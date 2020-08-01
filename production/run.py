@@ -8,6 +8,7 @@ from termcolor import cprint
 import argparse
 
 from mobsf import MobSF
+from generate_report import gen_report
 
 DELAY_TIME = 0.5
 WAIT_TIME = 0.8
@@ -16,26 +17,26 @@ FINAL_WAIT_TIME = 3
 DEBUG = True
 
 
-def open_activity(activity_name, activity_fullname):
+def open_activity(activity_name, activity_fullname, package_name):
     print("[*] {}: Starting activity...".format(activity_name))
-    os.system("adb shell pm clear {} > /dev/null".format(app_name))
+    os.system("adb shell pm clear {} > /dev/null".format(package_name))
     time.sleep(DELAY_TIME)
-    os.system("adb shell am start -n {}/{} > /dev/null".format(app_name, activity_fullname))
+    os.system("adb shell am start -n {}/{} > /dev/null".format(package_name, activity_fullname))
     print("[*] {}: Activity started".format(activity_name))
     time.sleep(DELAY_TIME)
 
-def reopen_page(activity_name, activity_fullname):
+def reopen_page(activity_name, activity_fullname, package_name):
     os.system("adb shell input keyevent KEYCODE_BACK")
     # time.sleep(DELAY_TIME)
-    os.system("adb shell am start -n {}/{} > /dev/null".format(app_name, activity_fullname))
+    os.system("adb shell am start -n {}/{} > /dev/null".format(package_name, activity_fullname))
 
 
 
-def find_buttons(activity_name, activity_fullname, app_name):
+def find_buttons(activity_name, activity_fullname, package_name):
     """
     Return a set of Buttons
     """
-    open_activity(activity_name, activity_fullname)
+    open_activity(activity_name, activity_fullname, package_name)
     
     print("[*] {}: Finding buttons".format(activity_name))
 
@@ -54,20 +55,20 @@ def find_buttons(activity_name, activity_fullname, app_name):
             # print(int(message["payload"].split("#")[1].split(" ")[0], base=16))
 
     
-    session = frida.get_usb_device().attach(app_name)
+    session = frida.get_usb_device().attach(package_name)
     script = session.create_script(jscode)
     script.on('message', on_message)
     script.load()
 
     print("[*] {}: Search hooks added, reloading activity...".format(activity_name))
-    reopen_page(activity_name, activity_fullname)
+    reopen_page(activity_name, activity_fullname, package_name)
     time.sleep(WAIT_TIME)
     print("[*] {}: Found {} buttons".format(activity_name, len(buttons)))
     script.unload()
     return buttons
 
 
-def click_button(activity_name, activity_fullname, button_id):
+def click_button(activity_name, activity_fullname, button_id, package_name):
     """
     Click button, also insert text to EditTexts
     """
@@ -75,7 +76,7 @@ def click_button(activity_name, activity_fullname, button_id):
 
     jscode = open("click_button.js").read()
     jscode = jscode.replace("[BUTTONID]", str(button_id))\
-                   .replace("[APPNAME]", app_name)\
+                   .replace("[APPNAME]", package_name)\
                    .replace("[ACTIVITY]", activity_fullname)\
                    .replace("[ACTIVITYSHORT]", activity_name)
     
@@ -87,14 +88,14 @@ def click_button(activity_name, activity_fullname, button_id):
                 cprint("[!] Error in JS Code:", "yellow")
                 cprint("[!] > " + message["description"], "yellow")
 
-    session = frida.get_usb_device().attach(app_name)
+    session = frida.get_usb_device().attach(package_name)
 
     script = session.create_script(jscode)
     script.on('message', on_message)
     script.load()
 
     print("[*] {}: Hooks added, reloading activity...".format(activity_name))
-    reopen_page(activity_name, activity_fullname)
+    reopen_page(activity_name, activity_fullname, package_name)
     time.sleep(FINAL_WAIT_TIME)
     script.unload()
 
@@ -104,12 +105,8 @@ def generate_sec_js(sec_fun):
     output = []
     output.append("""
 Java.perform(function() {
-    var sendWarn = function(disc, msg){
-        send("WARN#[!] [ACTIVITYSHORT]: ----- ⚠️ Found security issue ⚠️ -----");
-        send("WARN#[!] [ACTIVITYSHORT]: " + disc);
-        if (msg)
-            send("WARN#[!] [ACTIVITYSHORT]: > " + msg);
-        send("WARN#[!] [ACTIVITYSHORT]: ----------------------------------");
+    var sendWarn = function(disc, code, cvss){
+        send("[ACTIVITYSHORT]#|#" + disc + "#|#" + code + "#|#" + cvss);
     }
 
 """)
@@ -148,12 +145,7 @@ Java.perform(function() {
             else:
                 output.append("    {}.{}.implementation = function({}) {{".format(class_name.replace(".", "_"), fun_name, gen_fun_args(args_cnt)))
             
-            # if desc2:
-            #     output.append("        sendWarn('{}', '{}');".format(desc1, desc2).replace("[B]", "' + b + '"))
-            # else:
-            #     output.append("        sendWarn('{}', '{}.{}({})');".format(desc1, class_name.split(".")[-1], fun_name, gen_real_fun_args(args_cnt)))
-                # output.append("        sendWarn('{}', '{}.{}({})');".format(desc1, class_name.split(".")[-1], fun_name, "" if args_cnt == 0 else "..."))
-            output.append("        sendWarn('{}', '{}.{}({})');".format(desc1, class_name.split(".")[-1], fun_name, gen_real_fun_args(args_cnt)))
+            output.append("        sendWarn('{}', '{}.{}({})', '{}');".format(desc1, class_name.split(".")[-1], fun_name, gen_real_fun_args(args_cnt), cvss))
             
 
             output.append("        return this.{}({});".format(fun_name, gen_fun_args(args_cnt)))
@@ -165,7 +157,7 @@ Java.perform(function() {
     open("security_hooks.js", "w").write(jscode)
         
 
-def load_sec_hook(activity_name):
+def load_sec_hook(activity_name, issues):
     """
     Add security hook
     """
@@ -178,23 +170,24 @@ def load_sec_hook(activity_name):
         open("tmp-sec.js", "w").write(jscode)
 
     def on_message(message, data):
+        nonlocal issues
         if message["type"] == "error":
             if DEBUG:
                 cprint("[!] Error in JS Code:", "yellow")
                 cprint("[!] > " + message["description"], "yellow")
         else:
-            msg = message["payload"].split("#")[1]
-            if "⚠️" in msg:
-                cprint(msg.split("⚠️")[0], 'red', end="")
-                cprint("⚠️" + msg.split("⚠️")[1] + "⚠️", 'yellow', attrs=['blink'], end="")
-                cprint(msg.split("⚠️")[2], 'red')
-            elif "----------------------------------" in msg:
-                cprint(msg, 'red')
-            else:
-                cprint(msg.split(": ")[0] + ": ", 'red', end="")
-                cprint(": ".join(msg.split(": ")[1:]), 'yellow')
+            activity, disc, code, cvss = message["payload"].split("#|#")
+            cprint("[!] {}: -----".format(activity), 'red', end="")
+            cprint(" ⚠️ Found security issue ⚠️ ", 'yellow', attrs=['blink'], end="")
+            cprint("-----", 'red')
+            cprint("[!] {}: ".format(activity), 'red', end="")
+            cprint(disc, 'yellow')
+            cprint("[!] {}: ".format(activity), 'red', end="")
+            cprint("> {}".format(code), 'yellow')
+            cprint("[!] {}: ------------------------------------".format(activity), 'red')
+            issues.append((activity, disc, code, cvss))
 
-    session = frida.get_usb_device().attach(app_name)
+    session = frida.get_usb_device().attach(package_name)
 
     script = session.create_script(jscode)
     script.on('message', on_message)
@@ -203,9 +196,9 @@ def load_sec_hook(activity_name):
     print("[*] {}: Security testing hooks added".format(activity_name))
 
 
-def install_app(file, app_name):
-    print("[*] Phone: Checking if app {} is installed...".format(app_name))
-    if os.system("adb shell pm list packages | grep {} > /dev/null".format(app_name)) != 0:
+def install_app(file, package_name):
+    print("[*] Phone: Checking if app {} is installed...".format(package_name))
+    if os.system("adb shell pm list packages | grep {} > /dev/null".format(package_name)) != 0:
         print("[*] Phone: App not installed, installing...")
         os.system("adb install '{}' > /dev/null".format(file))
         print("[*] Phone: App installed!")
@@ -235,7 +228,7 @@ def mobsf_scan(host, port, apk, https):
         for file_path in files.keys():
             vuln_activities = vuln_activities.union(getClass(file_path))
     print("[*] MobSF: Found {} activities with potential security issues".format(len(vuln_activities)))
-    return vuln_activities, report["package_name"]
+    return vuln_activities, report["app_name"], report["package_name"]
 
 logo = """
 ██╗ █████╗  █████╗ ███████╗████████╗
@@ -244,7 +237,6 @@ logo = """
 ██║██╔══██║██╔══██║╚════██║   ██║   
 ██║██║  ██║██║  ██║███████║   ██║   
 ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝   ╚═╝   
-                                    
 """
 
 if __name__ == "__main__":
@@ -257,25 +249,28 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    vuln_activities, app_name = mobsf_scan(args.host, args.port, args.apk, args.https)
-    install_app(args.apk, app_name)
+    vuln_activities, app_name, package_name = mobsf_scan(args.host, args.port, args.apk, args.https)
+    install_app(args.apk, package_name)
     generate_sec_js("vuln_functions")
+    issues = []
 
     for activity_fullname in vuln_activities:
         try:
             activity_name = activity_fullname.split(".")[-1]
             print("[*] {}: Running test on activity: {}".format(activity_name, activity_name))
 
-            buttons = find_buttons(activity_name, activity_fullname, app_name)
+            buttons = find_buttons(activity_name, activity_fullname, package_name)
 
-            load_sec_hook(activity_name)
+            load_sec_hook(activity_name, issues)
             
             for button in buttons:
-                click_button(activity_name, activity_fullname, button)
+                click_button(activity_name, activity_fullname, button, package_name)
         except Exception as e:
             if DEBUG:
                 print(e)
             print("[*] {}: Activity closed, continuing..".format(activity_name))
+    
+    gen_report(app_name, issues)
     print("\nThanks for using ..\n" + logo)
     input("Press Enter to exit...\n")
     # sys.stdin.read()

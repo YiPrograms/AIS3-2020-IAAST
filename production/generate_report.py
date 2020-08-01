@@ -1,3 +1,4 @@
+import os
 
 # issues = [("activity", "details", "code", "cvss")]
 
@@ -17,4 +18,6 @@ def gen_report(app_name, issues):
         iss_lines.append(row)
     iss = "\n".join(iss_lines)
     html = template.replace("[APPNAME]", app_name).replace("[ISSUES]", iss)
-    open("report_{}.html".format(app_name), "w").write(html)
+    open("IAAST_{}.html".format(app_name), "w").write(html)
+    print("[*] IAAST: Report generated!")
+    print("[*] IAAST: {}".format(os.path.abspath("IAAST_{}.html".format(app_name))))
