@@ -1,33 +1,33 @@
 CLASS|android.util.Log
-v('java.lang.String', 'java.lang.String')|The App logs information. Sensitive information should never be logged.|[A]
-v('java.lang.String', 'java.lang.String', 'java.lang.Throwable')|The App logs information. Sensitive information should never be logged.|[A]
-d('java.lang.String', 'java.lang.String')|The App logs information. Sensitive information should never be logged.|[A]
-d('java.lang.String', 'java.lang.String', 'java.lang.Throwable')|The App logs information. Sensitive information should never be logged.|[A]
-i('java.lang.String', 'java.lang.String')|The App logs information. Sensitive information should never be logged.|[A]
-i('java.lang.String', 'java.lang.String', 'java.lang.Throwable')|The App logs information. Sensitive information should never be logged.|[A]
-w('java.lang.String', 'java.lang.String')|The App logs information. Sensitive information should never be logged.|[A]
-w('java.lang.String', 'java.lang.Throwable')|The App logs information. Sensitive information should never be logged.|[A]
-w('java.lang.String', 'java.lang.String', 'java.lang.Throwable')|The App logs information. Sensitive information should never be logged.|[A]
-e('java.lang.String', 'java.lang.String')|The App logs information. Sensitive information should never be logged.|[A]
-e('java.lang.String', 'java.lang.String', 'java.lang.Throwable')|The App logs information. Sensitive information should never be logged.|[A]
+v('java.lang.String', 'java.lang.String')|The App logs information. Sensitive information should never be logged.|7.5 (high)
+v('java.lang.String', 'java.lang.String', 'java.lang.Throwable')|The App logs information. Sensitive information should never be logged.|7.5 (high)
+d('java.lang.String', 'java.lang.String')|The App logs information. Sensitive information should never be logged.|7.5 (high)
+d('java.lang.String', 'java.lang.String', 'java.lang.Throwable')|The App logs information. Sensitive information should never be logged.|7.5 (high)
+i('java.lang.String', 'java.lang.String')|The App logs information. Sensitive information should never be logged.|7.5 (high)
+i('java.lang.String', 'java.lang.String', 'java.lang.Throwable')|The App logs information. Sensitive information should never be logged.|7.5 (high)
+w('java.lang.String', 'java.lang.String')|The App logs information. Sensitive information should never be logged.|7.5 (high)
+w('java.lang.String', 'java.lang.Throwable')|The App logs information. Sensitive information should never be logged.|7.5 (high)
+w('java.lang.String', 'java.lang.String', 'java.lang.Throwable')|The App logs information. Sensitive information should never be logged.|7.5 (high)
+e('java.lang.String', 'java.lang.String')|The App logs information. Sensitive information should never be logged.|7.5 (high)
+e('java.lang.String', 'java.lang.String', 'java.lang.Throwable')|The App logs information. Sensitive information should never be logged.|7.5 (high)
 
 CLASS|android.os.Environment
-getExternalStorageDirectory()|App can read/write to External Storage. Any App can read data written to External Storage.
-getExternalStoragePublicDirectory('java.lang.String')|App can read/write to External Storage. Any App can read data written to External Storage.
-getExternalStorageState()|App can read/write to External Storage. Any App can read data written to External Storage.
-getExternalStorageState('java.io.File')|App can read/write to External Storage. Any App can read data written to External Storage.
+getExternalStorageDirectory()|App can read/write to External Storage. Any App can read data written to External Storage.|5.5 (medium)
+getExternalStoragePublicDirectory('java.lang.String')|App can read/write to External Storage. Any App can read data written to External Storage.|5.5 (medium)
+getExternalStorageState()|App can read/write to External Storage. Any App can read data written to External Storage.|5.5 (medium)
+getExternalStorageState('java.io.File')|App can read/write to External Storage. Any App can read data written to External Storage.|5.5 (medium)
 
 CLASS|java.io.File
-createTempFile('java.lang.String', 'java.lang.String')|App can read/write to External Storage. Any App can read data written to External Storage.
-createTempFile('java.lang.String', 'java.lang.String', "java.io.File")|App can read/write to External Storage. Any App can read data written to External Storage.
+createTempFile('java.lang.String', 'java.lang.String')|App can read/write to External Storage. Any App can read data written to External Storage.|5.5 (medium)
+createTempFile('java.lang.String', 'java.lang.String', "java.io.File")|App can read/write to External Storage. Any App can read data written to External Storage.|5.5 (medium)
 
 CLASS|android.database.sqlite.SQLiteDatabase
-query('java.lang.String', '[Ljava.lang.String;', 'java.lang.String', '[Ljava.lang.String;', 'java.lang.String', 'java.lang.String', 'java.lang.String')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.
-query('java.lang.String', '[Ljava.lang.String;', 'java.lang.String', '[Ljava.lang.String;', 'java.lang.String', 'java.lang.String', 'java.lang.String', 'java.lang.String')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.
-query('boolean', 'java.lang.String', '[Ljava.lang.String;', 'java.lang.String', '[Ljava.lang.String;', 'java.lang.String', 'java.lang.String', 'java.lang.String', 'java.lang.String')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.
-query('boolean', 'java.lang.String', '[Ljava.lang.String;', 'java.lang.String', '[Ljava.lang.String;', 'java.lang.String', 'java.lang.String', 'java.lang.String', 'java.lang.String', 'android.os.CancellationSignal')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.
-rawQuery('java.lang.String', '[Ljava.lang.String;', 'android.os.CancellationSignal')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.
-rawQuery('java.lang.String', '[Ljava.lang.String;')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.
-execSQL('java.lang.String')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.
-execSQL('java.lang.String', '[Ljava.lang.Object;')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.
+query('java.lang.String', '[Ljava.lang.String;', 'java.lang.String', '[Ljava.lang.String;', 'java.lang.String', 'java.lang.String', 'java.lang.String')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.|5.5 (medium)
+query('java.lang.String', '[Ljava.lang.String;', 'java.lang.String', '[Ljava.lang.String;', 'java.lang.String', 'java.lang.String', 'java.lang.String', 'java.lang.String')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.|5.5 (medium)
+query('boolean', 'java.lang.String', '[Ljava.lang.String;', 'java.lang.String', '[Ljava.lang.String;', 'java.lang.String', 'java.lang.String', 'java.lang.String', 'java.lang.String')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.|5.5 (medium)
+query('boolean', 'java.lang.String', '[Ljava.lang.String;', 'java.lang.String', '[Ljava.lang.String;', 'java.lang.String', 'java.lang.String', 'java.lang.String', 'java.lang.String', 'android.os.CancellationSignal')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.|5.5 (medium)
+rawQuery('java.lang.String', '[Ljava.lang.String;', 'android.os.CancellationSignal')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.|5.5 (medium)
+rawQuery('java.lang.String', '[Ljava.lang.String;')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.|5.5 (medium)
+execSQL('java.lang.String')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.|5.5 (medium)
+execSQL('java.lang.String', '[Ljava.lang.Object;')|App uses SQLite Database and execute raw SQL query. Untrusted user input in raw SQL queries can cause SQL Injection. Also sensitive information should be encrypted and written to the database.|5.5 (medium)
 
