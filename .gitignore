@@ -9,3 +9,6 @@
 .history/
 
 __pycache__/
+
+**/tmp.js
+**/report.html

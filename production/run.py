@@ -12,7 +12,7 @@ import javalang
 
 DELAY_TIME = 0.5
 WAIT_TIME = 0.8
-FINAL_WAIT_TIME = 2
+FINAL_WAIT_TIME = 3
 
 DEBUG = True
 
@@ -27,7 +27,11 @@ def open_activity(activity_name, activity_fullname):
 
 def reopen_page(activity_name, activity_fullname):
     os.system("adb shell input keyevent KEYCODE_BACK")
+<<<<<<< HEAD
     time.sleep(DELAY_TIME)
+=======
+    # time.sleep(DELAY_TIME)
+>>>>>>> c91aa21bbd202f3d5a71b8bedbfad984feb1943c
     os.system("adb shell am start -n {}/{} > /dev/null".format(app_name, activity_fullname))
 
 
@@ -141,6 +145,10 @@ def generate_sec_js(sec_fun):
             classes[curClass].append((fun_name, fun_args, args_cnt, items[1], None if len(items) < 3 else items[2]))
 
     gen_fun_args = lambda n: ", ".join(list(map(lambda x: chr(x+ord('a')), range(n))))
+<<<<<<< HEAD
+=======
+    gen_real_fun_args = lambda n: "' + " + " + ', ' + ".join(list(map(lambda x: chr(x+ord('a')), range(n)))) + " + '"
+>>>>>>> c91aa21bbd202f3d5a71b8bedbfad984feb1943c
     
     for class_name , class_methods in classes.items():
         output.append("    var {} = Java.use('{}');".format(class_name.replace(".", "_"), class_name))
@@ -151,9 +159,16 @@ def generate_sec_js(sec_fun):
                 output.append("    {}.{}.implementation = function({}) {{".format(class_name.replace(".", "_"), fun_name, gen_fun_args(args_cnt)))
             
             if desc2:
+<<<<<<< HEAD
                 output.append("        sendWarn('{}', '{}');".format(desc1, desc2).replace("'[A]'", "a"))
             else:
                 output.append("        sendWarn('{}', '{}.{}({})');".format(desc1, class_name.split(".")[-1], fun_name, "" if args_cnt == 0 else "..."))
+=======
+                output.append("        sendWarn('{}', '{}');".format(desc1, desc2).replace("[B]", "' + b + '"))
+            else:
+                output.append("        sendWarn('{}', '{}.{}({})');".format(desc1, class_name.split(".")[-1], fun_name, gen_real_fun_args(args_cnt)))
+                # output.append("        sendWarn('{}', '{}.{}({})');".format(desc1, class_name.split(".")[-1], fun_name, "" if args_cnt == 0 else "..."))
+>>>>>>> c91aa21bbd202f3d5a71b8bedbfad984feb1943c
             
             output.append("        return this.{}({});".format(fun_name, gen_fun_args(args_cnt)))
             output.append("    }")
