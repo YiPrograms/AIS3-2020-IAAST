@@ -138,7 +138,7 @@ Java.perform(function() {
             classes[curClass].append((fun_name, fun_args, args_cnt, items[1], items[2]))
 
     gen_fun_args = lambda n: ", ".join(list(map(lambda x: chr(x+ord('a')), range(n))))
-    gen_real_fun_args = lambda n: "' + " + " + ', ' + ".join(list(map(lambda x: chr(x+ord('a')), range(n)))) + " + '"
+    gen_real_fun_args = lambda n: "' + " + " + ', ' + ".join(list(map(lambda x: chr(x+ord('a')), range(n)))) + " + '" if n > 0 else "''"
     
     for class_name , class_methods in classes.items():
         output.append("    var {} = Java.use('{}');".format(class_name.replace(".", "_"), class_name))
@@ -159,6 +159,7 @@ Java.perform(function() {
             output.append("        return this.{}({});".format(fun_name, gen_fun_args(args_cnt)))
             output.append("    }")
         output.append("")
+    output.append("[CUSTOMHOOKS]")
     output.append("})")
     jscode = "\n".join(output) + "\n"
     open("security_hooks.js", "w").write(jscode)
@@ -171,8 +172,11 @@ def load_sec_hook(activity_name):
     print("[*] {}: Adding security testing hooks...".format(activity_name))
 
     jscode = open("security_hooks.js").read()
-    jscode = jscode.replace("[ACTIVITYSHORT]", activity_name)
+    jscode = jscode.replace("[CUSTOMHOOKS]", open("custom.js").read()).replace("[ACTIVITYSHORT]", activity_name)
     
+    if DEBUG:
+        open("tmp-sec.js", "w").write(jscode)
+
     def on_message(message, data):
         if message["type"] == "error":
             if DEBUG:
