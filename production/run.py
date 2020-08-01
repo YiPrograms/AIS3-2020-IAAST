@@ -272,7 +272,9 @@ if __name__ == "__main__":
             
             for button in buttons:
                 click_button(activity_name, activity_fullname, button)
-        except Exception:
+        except Exception as e:
+            if DEBUG:
+                print(e)
             print("[*] {}: Activity closed, continuing..".format(activity_name))
     print("\nThanks for using ..\n" + logo)
     input("Press Enter to exit...\n")
