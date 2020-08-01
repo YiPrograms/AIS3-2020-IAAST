@@ -138,25 +138,27 @@ def generate_sec_js(sec_fun):
                 overloadSet.add(fun_name)
             else:
                 uniqueSet.add(fun_name)
-            classes[curClass].append((fun_name, fun_args, args_cnt, items[1], None if len(items) < 3 else items[2]))
+            classes[curClass].append((fun_name, fun_args, args_cnt, items[1], items[2]))
 
     gen_fun_args = lambda n: ", ".join(list(map(lambda x: chr(x+ord('a')), range(n))))
     gen_real_fun_args = lambda n: "' + " + " + ', ' + ".join(list(map(lambda x: chr(x+ord('a')), range(n)))) + " + '"
     
     for class_name , class_methods in classes.items():
         output.append("    var {} = Java.use('{}');".format(class_name.replace(".", "_"), class_name))
-        for fun_name, fun_args, args_cnt, desc1, desc2 in class_methods:
+        for fun_name, fun_args, args_cnt, desc1, cvss in class_methods:
             if fun_name in overloadSet:
                 output.append("    {}.{}.overload({}).implementation = function({}) {{".format(class_name.replace(".", "_"), fun_name, fun_args, gen_fun_args(args_cnt)))
             else:
                 output.append("    {}.{}.implementation = function({}) {{".format(class_name.replace(".", "_"), fun_name, gen_fun_args(args_cnt)))
             
-            if desc2:
-                output.append("        sendWarn('{}', '{}');".format(desc1, desc2).replace("[B]", "' + b + '"))
-            else:
-                output.append("        sendWarn('{}', '{}.{}({})');".format(desc1, class_name.split(".")[-1], fun_name, gen_real_fun_args(args_cnt)))
+            # if desc2:
+            #     output.append("        sendWarn('{}', '{}');".format(desc1, desc2).replace("[B]", "' + b + '"))
+            # else:
+            #     output.append("        sendWarn('{}', '{}.{}({})');".format(desc1, class_name.split(".")[-1], fun_name, gen_real_fun_args(args_cnt)))
                 # output.append("        sendWarn('{}', '{}.{}({})');".format(desc1, class_name.split(".")[-1], fun_name, "" if args_cnt == 0 else "..."))
+            output.append("        sendWarn('{}', '{}.{}({})');".format(desc1, class_name.split(".")[-1], fun_name, gen_real_fun_args(args_cnt)))
             
+
             output.append("        return this.{}({});".format(fun_name, gen_fun_args(args_cnt)))
             output.append("    }")
         output.append("")
