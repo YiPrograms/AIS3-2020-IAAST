@@ -63,6 +63,7 @@
 		border-radius: 2px;
 		padding: 80px 56px;
 		margin-bottom: 80px;
+		padding-top: 10px;
 		}
 
 		.demo-layout.is-small-screen .demo-content {
@@ -109,6 +110,7 @@
 			height: auto; /* height cannot be defined */
 			word-wrap: break-word; /* if you want to cut the complete word */
 			white-space: normal; /* be sure its not 'nowrap'! ! ! :/ */
+			font-size: 17px;
 		}
 
 		.cvss {
@@ -151,6 +153,10 @@
 			color: white !important;
 		}
 
+		.found_issues {
+			color: rgba(0,0,0,.54);
+		}
+
 		</style>
 	</head>
 	<body>
@@ -165,7 +171,8 @@
 				<div class="demo-container mdl-grid">
 					<div class="mdl-cell mdl-cell--1-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
 					<div class="demo-content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--10-col">
-						<h3>IAAST found issues</h3>
+						<h3>IAAST Report for [APPNAME]</h3>
+						<h4 class="found_issues">Found issues</h4>
 						<table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
 							<thead>
 								<tr>

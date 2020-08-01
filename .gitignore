@@ -14,3 +14,5 @@ __pycache__/
 **/report.html
 **/security_hooks.js
 **/tmp-sec.js
+
+**/IAAST_*.html
