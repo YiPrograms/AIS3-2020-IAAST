@@ -8,7 +8,6 @@ from termcolor import cprint
 import argparse
 
 from mobsf import MobSF
-import javalang
 
 DELAY_TIME = 0.5
 WAIT_TIME = 0.8
@@ -68,19 +67,17 @@ def find_buttons(activity_name, activity_fullname, app_name):
     return buttons
 
 
-def click_button(activity_name, activity_fullname, button_id, sec_functions):
+def click_button(activity_name, activity_fullname, button_id):
     """
-    Click button, also insert text to EditTexts, and other security checks
+    Click button, also insert text to EditTexts
     """
     print("[*] {}: Testing button {}".format(activity_name, button_id))
-    print("[*] {}: Adding security testing hooks...".format(activity_name))
 
     jscode = open("click_button.js").read()
     jscode = jscode.replace("[BUTTONID]", str(button_id))\
                    .replace("[APPNAME]", app_name)\
                    .replace("[ACTIVITY]", activity_fullname)\
-                   .replace("[ACTIVITYSHORT]", activity_name)\
-                   .replace("[SECFUNCTIONS]", sec_functions)
+                   .replace("[ACTIVITYSHORT]", activity_name)
     
     open("tmp.js", "w").write(jscode)
 
@@ -89,17 +86,6 @@ def click_button(activity_name, activity_fullname, button_id, sec_functions):
             if DEBUG:
                 cprint("[!] Error in JS Code:", "yellow")
                 cprint("[!] > " + message["description"], "yellow")
-        else:
-            msg = message["payload"].split("#")[1]
-            if "⚠️" in msg:
-                cprint(msg.split("⚠️")[0], 'red', end="")
-                cprint("⚠️" + msg.split("⚠️")[1] + "⚠️", 'yellow', attrs=['blink'], end="")
-                cprint(msg.split("⚠️")[2], 'red')
-            elif "----------------------------------" in msg:
-                cprint(msg, 'red')
-            else:
-                cprint(msg.split(": ")[0] + ": ", 'red', end="")
-                cprint(": ".join(msg.split(": ")[1:]), 'yellow')
 
     session = frida.get_usb_device().attach(app_name)
 
@@ -107,15 +93,26 @@ def click_button(activity_name, activity_fullname, button_id, sec_functions):
     script.on('message', on_message)
     script.load()
 
-    print("[*] {}: Security testing hooks added, reloading activity...".format(activity_name))
+    print("[*] {}: Hooks added, reloading activity...".format(activity_name))
     reopen_page(activity_name, activity_fullname)
     time.sleep(FINAL_WAIT_TIME)
-    # script.unload()
+    script.unload()
 
 
 def generate_sec_js(sec_fun):
     lines = open(sec_fun).read().splitlines()
     output = []
+    output.append("""
+Java.perform(function() {
+    var sendWarn = function(disc, msg){
+        send("WARN#[!] [ACTIVITYSHORT]: ----- ⚠️ Found security issue ⚠️ -----");
+        send("WARN#[!] [ACTIVITYSHORT]: " + disc);
+        if (msg)
+            send("WARN#[!] [ACTIVITYSHORT]: > " + msg);
+        send("WARN#[!] [ACTIVITYSHORT]: ----------------------------------");
+    }
+
+""")
 
     classes = {}
     curClass = ""
@@ -162,8 +159,45 @@ def generate_sec_js(sec_fun):
             output.append("        return this.{}({});".format(fun_name, gen_fun_args(args_cnt)))
             output.append("    }")
         output.append("")
-    return "\n".join(output)
+    output.append("})")
+    jscode = "\n".join(output) + "\n"
+    open("security_hooks.js", "w").write(jscode)
         
+
+def load_sec_hook(activity_name):
+    """
+    Add security hook
+    """
+    print("[*] {}: Adding security testing hooks...".format(activity_name))
+
+    jscode = open("security_hooks.js").read()
+    jscode = jscode.replace("[ACTIVITYSHORT]", activity_name)
+    
+    def on_message(message, data):
+        if message["type"] == "error":
+            if DEBUG:
+                cprint("[!] Error in JS Code:", "yellow")
+                cprint("[!] > " + message["description"], "yellow")
+        else:
+            msg = message["payload"].split("#")[1]
+            if "⚠️" in msg:
+                cprint(msg.split("⚠️")[0], 'red', end="")
+                cprint("⚠️" + msg.split("⚠️")[1] + "⚠️", 'yellow', attrs=['blink'], end="")
+                cprint(msg.split("⚠️")[2], 'red')
+            elif "----------------------------------" in msg:
+                cprint(msg, 'red')
+            else:
+                cprint(msg.split(": ")[0] + ": ", 'red', end="")
+                cprint(": ".join(msg.split(": ")[1:]), 'yellow')
+
+    session = frida.get_usb_device().attach(app_name)
+
+    script = session.create_script(jscode)
+    script.on('message', on_message)
+    script.load()
+
+    print("[*] {}: Security testing hooks added".format(activity_name))
+
 
 def install_app(file, app_name):
     print("[*] Phone: Checking if app {} is installed...".format(app_name))
@@ -221,7 +255,7 @@ if __name__ == "__main__":
 
     vuln_activities, app_name = mobsf_scan(args.host, args.port, args.apk, args.https)
     install_app(args.apk, app_name)
-    sec_functions = generate_sec_js("vuln_functions")
+    generate_sec_js("vuln_functions")
 
     for activity_fullname in vuln_activities:
         try:
@@ -229,12 +263,14 @@ if __name__ == "__main__":
             print("[*] {}: Running test on activity: {}".format(activity_name, activity_name))
 
             buttons = find_buttons(activity_name, activity_fullname, app_name)
+
+            load_sec_hook(activity_name)
             
             for button in buttons:
-                click_button(activity_name, activity_fullname, button, sec_functions)
+                click_button(activity_name, activity_fullname, button)
         except Exception:
             print("[*] {}: Activity closed, continuing..".format(activity_name))
-    print("Thanks for using ..\n" + logo)
-    input("Press Enter to exit...")
+    print("\nThanks for using ..\n" + logo)
+    input("Press Enter to exit...\n")
     # sys.stdin.read()
 

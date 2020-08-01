@@ -19,16 +19,5 @@ Java.perform(function() {
         var newText = JavaString.$new('5Om3_53cr37_1NFo');
         this.setText(newText, type);
     }
-
-
-
-    var sendWarn = function(disc, msg){
-        send("WARN#[!] [ACTIVITYSHORT]: ----- ⚠️ Found security issue ⚠️ -----");
-        send("WARN#[!] [ACTIVITYSHORT]: " + disc);
-        if (msg)
-            send("WARN#[!] [ACTIVITYSHORT]: > " + msg);
-        send("WARN#[!] [ACTIVITYSHORT]: ----------------------------------");
-    }
-
-[SECFUNCTIONS]
+    
 })
