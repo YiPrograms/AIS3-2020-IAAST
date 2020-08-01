@@ -138,7 +138,7 @@ Java.perform(function() {
             classes[curClass].append((fun_name, fun_args, args_cnt, items[1], items[2]))
 
     gen_fun_args = lambda n: ", ".join(list(map(lambda x: chr(x+ord('a')), range(n))))
-    gen_real_fun_args = lambda n: "' + " + " + ', ' + ".join(list(map(lambda x: chr(x+ord('a')), range(n)))) + " + '" if n > 0 else "''"
+    gen_real_fun_args = lambda n: "' + " + " + ', ' + ".join(list(map(lambda x: chr(x+ord('a')), range(n)))) + " + '" if n > 0 else "' + '"
     
     for class_name , class_methods in classes.items():
         output.append("    var {} = Java.use('{}');".format(class_name.replace(".", "_"), class_name))

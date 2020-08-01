@@ -127,6 +127,15 @@
 			text-transform: capitalize;
 		}
 
+		code {
+			font-size: 14px !important;
+			display: block; /* or inline-block, at least its a block element */
+			width: 100%; /* or width is certain by parent element */
+			height: auto; /* height cannot be defined */
+			word-wrap: break-word; /* if you want to cut the complete word */
+			white-space: normal; /* be sure its not 'nowrap'! ! ! :/ */
+		}
+
 		.high-chip {
 			background-color: #dc3545 !important;
 			color: white !important;
@@ -166,57 +175,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<td class="mdl-data-table__cell--non-numeric activities">[ACTIVITY]</td>
-									<td class="mdl-data-table__cell--non-numeric details">
-										<div class="inner">
-											<p>[DETAILS]</p>
-											<pre><code>[CODE]</code></pre>
-										</div>
-									</td>
-									<td class="cvss">
-										<div class="inner">
-											<p>[CVSS]</p>
-											<span class="mdl-chip [LEVEL]-chip">
-    											<span class="mdl-chip__text">[LEVEL]</span>
-											</span>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td class="mdl-data-table__cell--non-numeric activities">[ACTIVITY]</td>
-									<td class="mdl-data-table__cell--non-numeric details">
-										<div class="inner">
-											<p>[DETAILS]</p>
-											<pre><code>[CODE]</code></pre>
-										</div>
-									</td>
-									<td class="cvss">
-										<div class="inner">
-											<p>[CVSS]</p>
-											<span class="mdl-chip [LEVEL]-chip">
-    											<span class="mdl-chip__text">[LEVEL]</span>
-											</span>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td class="mdl-data-table__cell--non-numeric activities">[ACTIVITY]</td>
-									<td class="mdl-data-table__cell--non-numeric details">
-										<div class="inner">
-											<p>[DETAILS]</p>
-											<pre><code>[CODE]</code></pre>
-										</div>
-									</td>
-									<td class="cvss">
-										<div class="inner">
-											<p>[CVSS]</p>
-											<span class="mdl-chip [LEVEL]-chip">
-    											<span class="mdl-chip__text">[LEVEL]</span>
-											</span>
-										</div>
-									</td>
-								</tr>
+[ISSUES]
 							</tbody>
 						</table>
 					</div>
