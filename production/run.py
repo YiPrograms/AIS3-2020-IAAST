@@ -185,7 +185,7 @@ def load_sec_hook(activity_name, issues):
             cprint("[!] {}: ".format(activity), 'red', end="")
             cprint("> {}".format(code), 'yellow')
             cprint("[!] {}: ------------------------------------".format(activity), 'red')
-            issues.append((activity, disc, code, cvss))
+            issues.add((activity, disc, code, cvss))
 
     session = frida.get_usb_device().attach(package_name)
 
@@ -252,7 +252,7 @@ if __name__ == "__main__":
     vuln_activities, app_name, package_name = mobsf_scan(args.host, args.port, args.apk, args.https)
     install_app(args.apk, package_name)
     generate_sec_js("vuln_functions")
-    issues = []
+    issues = set()
 
     for activity_fullname in vuln_activities:
         try:
